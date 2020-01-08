@@ -1,1 +1,1 @@
-# PythonPractice_Buscaminas
+Práctica: juego buscaminas

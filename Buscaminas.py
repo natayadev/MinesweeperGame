@@ -1,4 +1,5 @@
-"""BUSCAMINAS"""
+"""BUSCAMINAS: https://www.youtube.com/channel/UCQLWbxZbgftDIhw21i6q_OA
+"""
 import random
 import os
 
@@ -44,18 +45,11 @@ def coloca_pistas(tablero, fil, col):
     for y in range(fil):
         for x in range(col):
             if tablero [y][x]==9:
-                if x<col-1:
-                    if tablero[y][x+1] !=9:
-                        tablero[y][x+1]+=1
-                if x>0:
-                    if tablero[y][x-1]!=9:
-                        tablero[y][x-1]+=1
-                if y>0:
-                    if tablero[y-1][x]!=9:
-                        tablero[y-1][x]+=1
-                if y<fil-1:
-                    if tablero[y+1][x]!=9:
-                        tablero[y+1][x]+=1
+                for i in [-1,0,1]:
+                    for j in [-1,0,1]:
+                        if 0<= y+i <= fil-1 and 0<= x+j <=col-1:
+                            if tablero[y+i][x+j]!=9:
+                                tablero[y+i][x+j]+=1
     return tablero
 
 def tablero_completo(tablero,fil,col,val):
@@ -116,8 +110,9 @@ visible=crea_tablero(filas, columnas, "-")
 """MINAS DESCUBRIERTAS"""
 oculto=crea_tablero(filas, columnas,0)
 oculto, minas_ocultas=coloca_minas(oculto, 15, filas, columnas)
-presentacion()
 oculto=coloca_pistas(oculto,filas,columnas)
+
+presentacion()
 
 """RELLENO ALEATORIO"""
 y=random.randint(2, filas-3)
@@ -152,6 +147,15 @@ while jugando:
             y+=1
             real=visible[y][x]
             visible[y][x]="x"
+            
+    elif mov=="a":
+        if x==0:
+            x=0
+        else:
+            visible[y][x]=real
+            x-=1
+            real=visible[y][x]
+            visible[y][x]="x"
 
     elif mov=="d":
         if x==columnas-1:
@@ -184,24 +188,27 @@ while jugando:
         elif oculto[y][x]!=0:
             visible[y][x]=oculto[y][x]
             real=visible[y][x]
+            
         elif oculto[y][x]==0:
             visible[y][x]=0
-            visible=rellenado(oculto, visible, y, x, "-")
+            visible=rellenado(oculto, visible, y, x, filas, columnas, "-")
             real=visible[y][x]
 
     os.system("cls")
     muestra_tablero(visible)
 
-    ganas=False
-    if tablero_completo(visible,filas,columnas,"-") and \
-       sorted(minas_ocultas)==sorted(minas_marcadas) and\
-       real!="-":
-        ganas=True
-        jugando=False
+"""MENSAJE FINAL"""
+ganas=False
 
-        if not ganas:
-            print("¡PERDISTE! :(")
-        else:
-            print("¡GANASTE! :D")
+if tablero_completo(visible,filas,columnas,"-") and \
+    sorted(minas_ocultas)==sorted(minas_marcadas) and\
+    real!="-":
+    ganas=True
+    jugando=False
+
+    if not ganas:
+        print("¡PERDISTE! :(")
+    else:
+        print("¡GANASTE! :D")
 
             
